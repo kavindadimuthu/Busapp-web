@@ -1,42 +1,39 @@
 import axios from 'axios';
-import type { BusSchedule, SchedulesResponse, Stop } from './type';
+import type { Stop, BusSchedule } from './type';
 
-const API_BASE_URL = 'http://localhost:5000';
-
-// Types based on the backend response format
-
+// API base URL - this should be from your environment variables in a real app
+const API_BASE_URL = 'http://localhost:5000'; // adjust as needed
 
 // Get all stops
 export const getStops = async (): Promise<Stop[]> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/stops`);
-    return response.data.stops;
+    return response.data;
   } catch (error) {
     console.error('Error fetching stops:', error);
-    return [];
+    throw error;
   }
 };
 
-// Search for schedules with various parameters
-export const searchSchedules = async (params: {
-  source?: string;
-  destination?: string;
-  date?: string;
-  operator?: string;
-  bus_type?: string;
-  route_name?: string;
-}): Promise<BusSchedule[]> => {
+// Search schedules with pagination and sorting
+export const searchSchedules = async (params: any): Promise<{
+  schedules: BusSchedule[];
+  total: number;
+  limit: number;
+  offset: number;
+}> => {
   try {
-    const response = await axios.get<SchedulesResponse>(`${API_BASE_URL}/schedule`, {
-      params: {
-        ...params,
-        limit: 50,
-        offset: 0,
-      },
-    });
-    return response.data.schedules || [];
+    const response = await axios.get(`${API_BASE_URL}/schedule`, { params });
+    
+    // Return full pagination data from the backend
+    return {
+      schedules: response.data.schedules || [],
+      total: response.data.total || 0,
+      limit: response.data.limit || 10,
+      offset: response.data.offset || 0
+    };
   } catch (error) {
     console.error('Error searching schedules:', error);
-    return [];
+    throw error;
   }
 };

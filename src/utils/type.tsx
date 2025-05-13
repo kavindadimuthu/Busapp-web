@@ -1,7 +1,7 @@
 export interface Stop {
   id: string;
   name: string;
-  city: string;
+  city?: string;
   location?: string;
 }
 
@@ -9,6 +9,16 @@ export interface ScheduleTime {
   id: string;
   departure_time: string;
   arrival_time: string;
+}
+
+export interface RouteStop {
+  id: string;
+  name: string;
+  city?: string;
+  location?: string;
+  sequence: number;
+  arrival_time?: string;
+  departure_time?: string;
 }
 
 export interface BusSchedule {
@@ -24,21 +34,25 @@ export interface BusSchedule {
   active: boolean;
   operator_id: string;
   operator_name: string;
-  contact_info: string;
+  contact_info?: string;
   route_id: string;
   route_name: string;
-  total_distance: number;
-  total_duration: number;
+  total_distance?: number;
+  total_duration?: number;
   source_stop_id: string;
   source_stop_name: string;
-  source_stop_city: string;
+  source_stop_city?: string;
   destination_stop_id: string;
   destination_stop_name: string;
-  destination_stop_city: string;
-  stops: Stop[];
+  destination_stop_city?: string;
+  stops: RouteStop[];
   times: ScheduleTime[];
 }
 
-export interface SchedulesResponse {
-  schedules: BusSchedule[];
+// Pagination response type
+export interface PaginatedResponse<T> {
+  total: number;
+  limit: number;
+  offset: number;
+  [key: string]: any; // For additional data specific to each endpoint
 }

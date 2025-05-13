@@ -1,135 +1,139 @@
 {
-  "schedules": [
-    {
-      "schedule_id": "16fae1a0-fe6b-45fa-9567-395ed4743969",
-      "valid_from": "2025-05-14T18:30:00.000Z",
-      "valid_until": "2025-12-30T18:30:00.000Z",
-      "days_of_week": [
-        "Monday",
-        "Wednesday",
-        "Friday"
-      ],
-      "bus_id": "94a42b4f-9cc8-4921-8ad5-27ad62fd82b0",
-      "bus_number": "NB-1234",
-      "bus_name": "Colombo Express",
-      "bus_type": "Express",
-      "fare": "350",
-      "active": true,
-      "operator_id": "031cb32c-9abf-4d7d-9131-8e277b4bfe57",
-      "operator_name": "Sri Lanka Transport Board",
-      "contact_info": "011-2581123",
-      "route_id": "5d8e4cdf-a90f-46a3-9dee-c1e1ab66565f",
-      "route_name": "Colombo to Kandy",
-      "total_distance": 115,
-      "total_duration": 180,
-      "source_stop_id": "c8c8fdb6-cb98-42fa-81af-4aee79d3fd28",
-      "source_stop_name": "Colombo Fort",
-      "source_stop_city": "Colombo",
-      "destination_stop_id": "34e51ec6-924a-43c6-a6b6-b960887b9579",
-      "destination_stop_name": "Kandy Clock Tower",
-      "destination_stop_city": "Kandy",
-      "stops": [
+    "total": 2,
+    "limit": 50,
+    "offset": 0,
+    "schedules": [
         {
-          "id": "4490ea5a-ae82-456a-9ed2-1a694a519c90",
-          "name": "Kadawatha",
-          "city": "Kadawatha",
-          "location": "POINT(79.9632 7.0015)",
-          "sequence": 1,
-          "arrival_time": "06:45:00",
-          "departure_time": "06:50:00"
+            "schedule_id": "16fae1a0-fe6b-45fa-9567-395ed4743969",
+            "valid_from": "2025-05-14T18:30:00.000Z",
+            "valid_until": "2025-12-30T18:30:00.000Z",
+            "days_of_week": [
+                "Monday",
+                "Wednesday",
+                "Friday"
+            ],
+            "bus_id": "94a42b4f-9cc8-4921-8ad5-27ad62fd82b0",
+            "bus_number": "NB-1234",
+            "bus_name": "Colombo Express",
+            "bus_type": "Express",
+            "fare": "350",
+            "active": true,
+            "operator_id": "031cb32c-9abf-4d7d-9131-8e277b4bfe57",
+            "operator_name": "Sri Lanka Transport Board",
+            "contact_info": "011-2581123",
+            "route_id": "5d8e4cdf-a90f-46a3-9dee-c1e1ab66565f",
+            "route_name": "Colombo to Kandy",
+            "total_distance": 115,
+            "total_duration": 180,
+            "source_stop_id": "c8c8fdb6-cb98-42fa-81af-4aee79d3fd28",
+            "source_stop_name": "Colombo Fort",
+            "source_stop_city": "Colombo",
+            "destination_stop_id": "34e51ec6-924a-43c6-a6b6-b960887b9579",
+            "destination_stop_name": "Kandy Clock Tower",
+            "destination_stop_city": "Kandy",
+            "stops": [
+                {
+                    "id": "4490ea5a-ae82-456a-9ed2-1a694a519c90",
+                    "name": "Kadawatha",
+                    "city": "Kadawatha",
+                    "location": "POINT(79.9632 7.0015)",
+                    "sequence": 1,
+                    "arrival_time": "06:45:00",
+                    "departure_time": "06:50:00"
+                },
+                {
+                    "id": "457136b3-f557-4a7d-9ba0-91eb75b67b74",
+                    "name": "Mawanella",
+                    "city": "Mawanella",
+                    "location": "POINT(80.4625 7.2667)",
+                    "sequence": 2,
+                    "arrival_time": "08:15:00",
+                    "departure_time": "08:20:00"
+                }
+            ],
+            "times": [
+                {
+                    "id": "38a22393-64ce-459a-a808-6b706033fa9c",
+                    "departure_time": "06:30:00",
+                    "arrival_time": "09:30:00"
+                },
+                {
+                    "id": "7fc2e13f-1da0-4f4b-9915-0b4dfcda6cbf",
+                    "departure_time": "14:00:00",
+                    "arrival_time": "17:00:00"
+                }
+            ]
         },
         {
-          "id": "457136b3-f557-4a7d-9ba0-91eb75b67b74",
-          "name": "Mawanella",
-          "city": "Mawanella",
-          "location": "POINT(80.4625 7.2667)",
-          "sequence": 2,
-          "arrival_time": "08:15:00",
-          "departure_time": "08:20:00"
+            "schedule_id": "f975e018-0aae-4c66-97e2-d63adcc599f6",
+            "valid_from": "2025-05-14T18:30:00.000Z",
+            "valid_until": "2025-12-30T18:30:00.000Z",
+            "days_of_week": [
+                "Monday",
+                "Wednesday",
+                "Friday",
+                "Saturday"
+            ],
+            "bus_id": "64668d89-4529-49ed-8f61-06d1f9b8f2f9",
+            "bus_number": "AB-1234",
+            "bus_name": "Luxury Express",
+            "bus_type": "AC",
+            "fare": "500",
+            "active": true,
+            "operator_id": "36b8feea-2e1b-43a8-a788-c0a9967f5fbe",
+            "operator_name": "ABC Travels",
+            "contact_info": "1234567890",
+            "route_id": "15897515-74b7-42d8-aaf9-bc217e8d7334",
+            "route_name": "Colombo-Kandy",
+            "total_distance": 120,
+            "total_duration": 180,
+            "source_stop_id": "54f0f87b-dfbd-4c16-a480-de46ffe19f20",
+            "source_stop_name": "Colombo",
+            "source_stop_city": "Colombo",
+            "destination_stop_id": "22926c88-1c98-4975-98ff-c00d909e6fdd",
+            "destination_stop_name": "Kandy",
+            "destination_stop_city": "Kandy",
+            "stops": [
+                {
+                    "id": "54f0f87b-dfbd-4c16-a480-de46ffe19f20",
+                    "name": "Colombo",
+                    "city": "Colombo",
+                    "location": "POINT(79.8612 6.9271)",
+                    "sequence": 1,
+                    "arrival_time": "06:00:00",
+                    "departure_time": "06:10:00"
+                },
+                {
+                    "id": "63bf2c5e-dea1-45f3-96a3-e776fba5d1ef",
+                    "name": "Kegalle",
+                    "city": "Kegalle",
+                    "location": "POINT(80.3489 7.2513)",
+                    "sequence": 2,
+                    "arrival_time": "07:30:00",
+                    "departure_time": "07:40:00"
+                },
+                {
+                    "id": "22926c88-1c98-4975-98ff-c00d909e6fdd",
+                    "name": "Kandy",
+                    "city": "Kandy",
+                    "location": "POINT(80.6385 7.2906)",
+                    "sequence": 3,
+                    "arrival_time": "09:00:00",
+                    "departure_time": "09:00:00"
+                }
+            ],
+            "times": [
+                {
+                    "id": "57c633a8-23aa-4550-9120-75dbb3a3c7cf",
+                    "departure_time": "06:10:00",
+                    "arrival_time": "09:00:00"
+                },
+                {
+                    "id": "d188d5ac-5545-4e2e-a56e-88e915eb53aa",
+                    "departure_time": "14:00:00",
+                    "arrival_time": "16:50:00"
+                }
+            ]
         }
-      ],
-      "times": [
-        {
-          "id": "38a22393-64ce-459a-a808-6b706033fa9c",
-          "departure_time": "06:30:00",
-          "arrival_time": "09:30:00"
-        },
-        {
-          "id": "7fc2e13f-1da0-4f4b-9915-0b4dfcda6cbf",
-          "departure_time": "14:00:00",
-          "arrival_time": "17:00:00"
-        }
-      ]
-    },
-    {
-      "schedule_id": "f975e018-0aae-4c66-97e2-d63adcc599f6",
-      "valid_from": "2025-05-14T18:30:00.000Z",
-      "valid_until": "2025-12-30T18:30:00.000Z",
-      "days_of_week": [
-        "Monday",
-        "Wednesday",
-        "Friday"
-      ],
-      "bus_id": "64668d89-4529-49ed-8f61-06d1f9b8f2f9",
-      "bus_number": "AB-1234",
-      "bus_name": "Luxury Express",
-      "bus_type": "AC",
-      "fare": "500",
-      "active": true,
-      "operator_id": "36b8feea-2e1b-43a8-a788-c0a9967f5fbe",
-      "operator_name": "ABC Travels",
-      "contact_info": "1234567890",
-      "route_id": "15897515-74b7-42d8-aaf9-bc217e8d7334",
-      "route_name": "Colombo-Kandy",
-      "total_distance": 120,
-      "total_duration": 180,
-      "source_stop_id": "54f0f87b-dfbd-4c16-a480-de46ffe19f20",
-      "source_stop_name": "Colombo",
-      "source_stop_city": "Colombo",
-      "destination_stop_id": "22926c88-1c98-4975-98ff-c00d909e6fdd",
-      "destination_stop_name": "Kandy",
-      "destination_stop_city": "Kandy",
-      "stops": [
-        {
-          "id": "54f0f87b-dfbd-4c16-a480-de46ffe19f20",
-          "name": "Colombo",
-          "city": "Colombo",
-          "location": "POINT(79.8612 6.9271)",
-          "sequence": 1,
-          "arrival_time": "06:00:00",
-          "departure_time": "06:10:00"
-        },
-        {
-          "id": "63bf2c5e-dea1-45f3-96a3-e776fba5d1ef",
-          "name": "Kegalle",
-          "city": "Kegalle",
-          "location": "POINT(80.3489 7.2513)",
-          "sequence": 2,
-          "arrival_time": "07:30:00",
-          "departure_time": "07:40:00"
-        },
-        {
-          "id": "22926c88-1c98-4975-98ff-c00d909e6fdd",
-          "name": "Kandy",
-          "city": "Kandy",
-          "location": "POINT(80.6385 7.2906)",
-          "sequence": 3,
-          "arrival_time": "09:00:00",
-          "departure_time": "09:00:00"
-        }
-      ],
-      "times": [
-        {
-          "id": "57c633a8-23aa-4550-9120-75dbb3a3c7cf",
-          "departure_time": "06:10:00",
-          "arrival_time": "09:00:00"
-        },
-        {
-          "id": "d188d5ac-5545-4e2e-a56e-88e915eb53aa",
-          "departure_time": "14:00:00",
-          "arrival_time": "16:50:00"
-        }
-      ]
-    }
-  ]
+    ]
 }
