@@ -24,6 +24,7 @@ export const searchSchedules = async (params: any): Promise<{
 }> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/schedule`, { params });
+    console.log('API response:', response.data);
     
     // Return full pagination data from the backend
     return {

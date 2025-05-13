@@ -3,6 +3,7 @@ import SearchForm from '../components/SearchForm';
 import Pagination from '../components/Pagination';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ScheduleList from '../components/ScheduleList';
 import { searchSchedules } from '../utils/apiHelper';
 import type { BusSchedule } from '../utils/type';
 
@@ -130,57 +131,12 @@ const Home = () => {
           onSortChange={handleSortChange}
         />
         
-        {/* Loading state */}
-        {isLoading && (
-          <div className="flex justify-center my-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        )}
-        
-        {/* Error state */}
-        {error && (
-          <div className="bg-red-50 p-4 rounded-md my-8 text-red-800 border border-red-200">
-            <p>{error}</p>
-          </div>
-        )}
-        
-        {/* Results display */}
-        {!isLoading && !error && schedules.length > 0 ? (
-          <div className="my-8">
-            <h2 className="text-xl font-bold mb-4">Search Results ({totalItems})</h2>
-            <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-              {schedules.map((schedule) => (
-                <div 
-                  key={schedule.schedule_id} 
-                  className="p-4 border-b border-gray-100 hover:bg-gray-50"
-                >
-                  <h3 className="font-medium text-lg">
-                    {schedule.source_stop_name} to {schedule.destination_stop_name}
-                  </h3>
-                  <div className="text-sm text-gray-500 mt-1">
-                    <p>Route: {schedule.route_name}</p>
-                    <p>Bus: {schedule.bus_name} ({schedule.bus_type})</p>
-                    <p>Operator: {schedule.operator_name}</p>
-                    <p>Fare: Rs. {schedule.fare}</p>
-                    <p>Valid days: {schedule.days_of_week.join(', ')}</p>
-                    <p>Available times:</p>
-                    <ul className="list-disc pl-5 mt-1">
-                      {schedule.times.map((time) => (
-                        <li key={time.id}>
-                          Departs: {time.departure_time} - Arrives: {time.arrival_time}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : !isLoading && !error ? (
-          <div className="my-8 bg-blue-50 p-6 rounded-xl border border-blue-100 text-center">
-            <p className="text-blue-700">No schedules found with the current search criteria. Try adjusting your filters.</p>
-          </div>
-        ) : null}
+        {/* Schedule List Component */}
+        <ScheduleList 
+          schedules={schedules}
+          isLoading={isLoading}
+          error={error}
+        />
         
         {/* Pagination - only show if we have results and more than one page */}
         {!isLoading && totalItems > 0 && (
