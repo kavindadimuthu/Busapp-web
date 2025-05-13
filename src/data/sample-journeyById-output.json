@@ -1,0 +1,81 @@
+{
+    "journey_id": "75e15b17-0458-447c-b763-e604507f5c89",
+    "departure_time": "05:45:00",
+    "arrival_time": "09:15:00",
+    "days_of_week": [
+        "Sat",
+        "Sun"
+    ],
+    "schedule_id": "264eccfb-4bdd-4daa-b3bb-7735031f3e43",
+    "valid_from": "2025-05-14T18:30:00.000Z",
+    "valid_until": null,
+    "bus_id": "c486e247-828b-494d-a164-9ffbe623162a",
+    "bus_number": "SP-4321",
+    "bus_name": "Matara Deluxe",
+    "bus_type": "Non-AC",
+    "fare": "600",
+    "is_active": true,
+    "operator_id": "22991921-6d15-47ed-9cc9-df405bcc9dce",
+    "operator_name": "Intercity Travels",
+    "contact_info": "071-9876543",
+    "route_id": "208b5d20-e842-45dd-8a76-59e77b8dae33",
+    "route_name": "Colombo to Matara",
+    "total_distance": 160,
+    "total_duration": 210,
+    "stops": [
+        {
+            "id": "38cc60d8-af19-4571-8d2e-de5ff407ed65",
+            "name": "Colombo Fort",
+            "city": "Colombo",
+            "location": "POINT(79.8578 6.9344)",
+            "sequence": 1
+        },
+        {
+            "id": "cb233cfe-f902-4d63-a3d6-23c1d98ff68b",
+            "name": "Galle Bus Stand",
+            "city": "Galle",
+            "location": "POINT(80.217 6.0367)",
+            "sequence": 2
+        },
+        {
+            "id": "b237385b-fdd7-4bf7-bca1-09fbda65283f",
+            "name": "Weligama",
+            "city": "Matara",
+            "location": "POINT(80.4267 5.9731)",
+            "sequence": 3
+        },
+        {
+            "id": "b9df94cc-9c80-4427-8c28-49ff37e78331",
+            "name": "Matara Bus Stand",
+            "city": "Matara",
+            "location": "POINT(80.5464 5.9485)",
+            "sequence": 4
+        }
+    ],
+    "stop_times": [
+        {
+            "id": "50b2a75f-2038-483c-b13a-7d3517a704d7",
+            "route_stop_id": "0a8da1bd-225f-4ec6-8f73-b4c3b82de824",
+            "arrival_time": "07:45:00",
+            "departure_time": "07:50:00"
+        },
+        {
+            "id": "a91b664b-2744-4137-b1e6-4c21fffb4ccd",
+            "route_stop_id": "055b626b-6213-416b-822d-2f9c791a302c",
+            "arrival_time": "09:15:00",
+            "departure_time": null
+        },
+        {
+            "id": "afc17f38-c4eb-4215-ae1a-80d7b9005657",
+            "route_stop_id": "cf3aaa5a-85dd-4e43-883a-dcf509266a66",
+            "arrival_time": "08:30:00",
+            "departure_time": "08:35:00"
+        },
+        {
+            "id": "c6c5084c-fa30-4c6e-a080-e17115a21732",
+            "route_stop_id": "762e24d6-dd04-4258-940c-a17e3fd59493",
+            "arrival_time": null,
+            "departure_time": "05:45:00"
+        }
+    ]
+}

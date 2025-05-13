@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Stop, BusSchedule } from './type';
+import type { Stop, Journey, JourneyResponse } from './type';
 
 // API base URL - this should be from your environment variables in a real app
 const API_BASE_URL = 'http://localhost:5000'; // adjust as needed
@@ -15,26 +15,33 @@ export const getStops = async (): Promise<Stop[]> => {
   }
 };
 
-// Search schedules with pagination and sorting
-export const searchSchedules = async (params: any): Promise<{
-  schedules: BusSchedule[];
-  total: number;
-  limit: number;
-  offset: number;
-}> => {
+// Search journeys with pagination and sorting
+export const searchJourneys = async (params: any): Promise<JourneyResponse> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/schedule`, { params });
+    const response = await axios.get(`${API_BASE_URL}/journey`, { params });
     console.log('API response:', response.data);
     
     // Return full pagination data from the backend
     return {
-      schedules: response.data.schedules || [],
+      journeys: response.data.journeys || [],
       total: response.data.total || 0,
       limit: response.data.limit || 10,
       offset: response.data.offset || 0
     };
   } catch (error) {
-    console.error('Error searching schedules:', error);
+    console.error('Error searching journeys:', error);
+    throw error;
+  }
+};
+
+// Get a single journey by ID
+export const getJourneyById = async (journeyId: string): Promise<Journey> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/journey/${journeyId}`);
+    console.log('Journey data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching journey:', error);
     throw error;
   }
 };

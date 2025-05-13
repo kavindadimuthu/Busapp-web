@@ -1,52 +1,41 @@
 export interface Stop {
   id: string;
   name: string;
-  city?: string;
-  location?: string;
+  city: string;
+  location: string;
+  sequence: number;
 }
 
-export interface ScheduleTime {
+export interface StopTime {
   id: string;
+  route_stop_id: string;
+  arrival_time: string | null;
+  departure_time: string | null;
+}
+
+export interface Journey {
+  journey_id: string;
   departure_time: string;
   arrival_time: string;
-}
-
-export interface RouteStop {
-  id: string;
-  name: string;
-  city?: string;
-  location?: string;
-  sequence: number;
-  arrival_time?: string;
-  departure_time?: string;
-}
-
-export interface BusSchedule {
+  days_of_week: string[];
   schedule_id: string;
   valid_from: string;
-  valid_until: string;
-  days_of_week: string[];
+  valid_until: string | null;
   bus_id: string;
   bus_number: string;
   bus_name: string;
   bus_type: string;
   fare: string;
-  active: boolean;
+  is_active: boolean;
   operator_id: string;
   operator_name: string;
-  contact_info?: string;
+  contact_info: string;
   route_id: string;
   route_name: string;
-  total_distance?: number;
-  total_duration?: number;
-  source_stop_id: string;
-  source_stop_name: string;
-  source_stop_city?: string;
-  destination_stop_id: string;
-  destination_stop_name: string;
-  destination_stop_city?: string;
-  stops: RouteStop[];
-  times: ScheduleTime[];
+  total_distance: number;
+  total_duration: number;
+  stops: Stop[];
+  stop_times: StopTime[];
 }
 
 // Pagination response type
@@ -55,4 +44,8 @@ export interface PaginatedResponse<T> {
   limit: number;
   offset: number;
   [key: string]: any; // For additional data specific to each endpoint
+}
+
+export interface JourneyResponse extends PaginatedResponse<Journey> {
+  journeys: Journey[];
 }

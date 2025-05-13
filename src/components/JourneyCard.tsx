@@ -1,15 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaClock, FaExchangeAlt } from 'react-icons/fa';
-import type { BusSchedule } from '../utils/type';
+import type { Journey } from '../utils/type';
 
-interface ScheduleCardProps {
-  schedule: BusSchedule;
+interface JourneyCardProps {
+  journey: Journey;
 }
 
-const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
-  // Get the first journey (we'll display the first available one)
-  const journey = schedule.journeys && schedule.journeys.length > 0 ? schedule.journeys[0] : null;
-  
+const JourneyCard: React.FC<JourneyCardProps> = ({ journey }) => {
   // Format time to 12-hour format with AM/PM
   const formatTime = (time: string) => {
     if (!time) return '';
@@ -22,13 +20,22 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
 
   // Calculate duration in a readable format
   const getDuration = () => {
-    if (schedule.total_duration) {
-      const hours = Math.floor(schedule.total_duration / 60);
-      const minutes = schedule.total_duration % 60;
+    if (journey.total_duration) {
+      const hours = Math.floor(journey.total_duration / 60);
+      const minutes = journey.total_duration % 60;
       return `${hours}h ${minutes}m`;
     }
     return 'N/A';
   };
+
+  // Get source and destination stops
+  const sourceStop = journey.stops && journey.stops.length > 0 
+    ? journey.stops.find(stop => stop.sequence === 1) || journey.stops[0]
+    : null;
+    
+  const destinationStop = journey.stops && journey.stops.length > 0
+    ? journey.stops.find(stop => stop.sequence === journey.stops.length) || journey.stops[journey.stops.length - 1]
+    : null;
 
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-4 transition-all hover:shadow-lg">
@@ -36,13 +43,13 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
         {/* Bus Company and Type */}
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
-            <span className="text-lg font-semibold text-gray-800">{schedule.operator_name}</span>
+            <span className="text-lg font-semibold text-gray-800">{journey.operator_name}</span>
             <span className="ml-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-              {schedule.bus_type}
+              {journey.bus_type}
             </span>
-            {schedule.bus_name && (
+            {journey.bus_name && (
               <span className="ml-2 text-sm text-gray-600">
-                {schedule.bus_name}
+                {journey.bus_name}
               </span>
             )}
           </div>
@@ -60,10 +67,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
             <div className="flex flex-col items-start">
               <span className="text-gray-500 text-sm">DEPARTS</span>
               <span className="font-bold text-xl">
-                {journey?.departure_time ? formatTime(journey.departure_time) : 'N/A'}
+                {journey.departure_time ? formatTime(journey.departure_time) : 'N/A'}
               </span>
               <span className="text-gray-700 font-semibold">
-                {schedule.stops && schedule.stops.length > 0 && schedule.stops[0]?.name || 'Source'}
+                {sourceStop?.name || 'Source'}
               </span>
             </div>
             
@@ -84,11 +91,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
             <div className="flex flex-col items-end">
               <span className="text-gray-500 text-sm">ARRIVES</span>
               <span className="font-bold text-xl">
-                {journey?.arrival_time ? formatTime(journey.arrival_time) : 'N/A'}
+                {journey.arrival_time ? formatTime(journey.arrival_time) : 'N/A'}
               </span>
               <span className="text-gray-700 font-semibold text-right">
-                {schedule.stops && schedule.stops.length > 0 && 
-                 schedule.stops[schedule.stops.length - 1]?.name || 'Destination'}
+                {destinationStop?.name || 'Destination'}
               </span>
             </div>
           </div>
@@ -97,7 +103,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
         {/* Amenities and Price */}
         <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
           <div className="flex space-x-3">
-            {schedule.bus_type === 'AC' && (
+            {journey.bus_type === 'AC' && (
               <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
                 <FaCheckCircle className="mr-1 text-green-600" size={10} />
                 Air Conditioned
@@ -115,7 +121,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
           <div className="text-right">
             <div className="text-xs text-gray-500">for as low as</div>
             <div className="flex items-baseline">
-              <span className="text-2xl font-bold text-gray-800">{schedule.fare}</span>
+              <span className="text-2xl font-bold text-gray-800">{journey.fare}</span>
               <span className="ml-1 text-sm text-gray-600">LKR</span>
             </div>
             <div className="text-xs text-gray-500">PER SEAT</div>
@@ -123,25 +129,32 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
         </div>
 
         {/* Days of Operation */}
-        {journey?.days_of_week && journey.days_of_week.length > 0 && (
+        {journey.days_of_week && journey.days_of_week.length > 0 && (
           <div className="mt-3 text-sm text-gray-600">
             <span className="font-medium">Operates on: </span>
             {journey.days_of_week.join(', ')}
           </div>
         )}
 
-        {/* Schedule Status - If seats available information is added later */}
+        {/* Route name */}
+        <div className="mt-2 text-sm text-gray-600">
+          <span className="font-medium">Route: </span>
+          {journey.route_name}
+        </div>
+
+        {/* Journey Status - If seats available information is added later */}
         <div className="mt-4 flex justify-between items-center">
           <span className="text-sm text-red-600">Limited seats left</span>
-          <button 
+          <Link 
+            to={`/journey/${journey.journey_id}`}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
           >
             View Details
-          </button>
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default ScheduleCard;
+export default JourneyCard;
