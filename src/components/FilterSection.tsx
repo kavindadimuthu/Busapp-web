@@ -476,7 +476,9 @@ const FilterSection = ({
                 <div className="grid grid-cols-5 gap-4">
                   {/* Bus Type Filter */}
                   <div
-                    ref={(el) => (dropdownRefs.current["busType"] = el)}
+                    ref={(el) => {
+                      dropdownRefs.current["busType"] = el;
+                    }}
                     className="relative"
                   >
                     <button
@@ -522,7 +524,9 @@ const FilterSection = ({
 
                   {/* Operator Filter */}
                   <div
-                    ref={(el) => (dropdownRefs.current["operator"] = el)}
+                    ref={(el) => {
+                      dropdownRefs.current["operator"] = el;
+                    }}
                     className="relative"
                   >
                     <button
@@ -575,7 +579,9 @@ const FilterSection = ({
 
                   {/* Departure Time Filter */}
                   <div
-                    ref={(el) => (dropdownRefs.current["departure"] = el)}
+                    ref={(el) => {
+                      dropdownRefs.current["departure"] = el;
+                    }}
                     className="relative"
                   >
                     <button
@@ -625,7 +631,9 @@ const FilterSection = ({
 
                   {/* Arrival Time Filter */}
                   <div
-                    ref={(el) => (dropdownRefs.current["arrival"] = el)}
+                    ref={(el) => {
+                      dropdownRefs.current["arrival"] = el;
+                    }}
                     className="relative"
                   >
                     <button
@@ -675,7 +683,9 @@ const FilterSection = ({
 
                   {/* Days Filter */}
                   <div
-                    ref={(el) => (dropdownRefs.current["days"] = el)}
+                    ref={(el) => {
+                      dropdownRefs.current["days"] = el;
+                    }}
                     className="relative"
                   >
                     <button

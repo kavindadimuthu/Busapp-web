@@ -51,11 +51,12 @@ export interface JourneyResponse extends PaginatedResponse {
 }
 
 // Define search params type for journeys
-export interface JourneySearchParams {
+export type JourneySearchParams = {
   source?: string;
   destination?: string;
   date?: string;
   limit?: number;
   offset?: number;
-  [key: string]: string | number | undefined;
-}
+  days_of_week?: string[]; // allow string[]
+  [key: string]: string | string[] | number | undefined;
+};
