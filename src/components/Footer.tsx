@@ -10,7 +10,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center mb-4">
               <FaBus className="text-blue-400 text-2xl mr-2" />
-              <h3 className="text-xl font-bold">BusConnect</h3>
+              <h3 className="text-xl font-bold">BuzZer</h3>
             </div>
             <p className="text-gray-400 text-sm mb-4">
               Your trusted companion for bus travel across Sri Lanka. 
@@ -93,7 +93,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start">
                 <FaEnvelope className="mt-1 mr-3 text-blue-400" />
-                <span>info@busapp.lk</span>
+                <span>info@buzzer.lk</span>
               </li>
               <li className="flex items-start">
                 <FaMapMarkerAlt className="mt-1 mr-3 text-blue-400" />
@@ -105,7 +105,7 @@ const Footer = () => {
         
         {/* Bottom Footer */}
         <div className="mt-8 pt-6 border-t border-gray-700 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} BusConnect. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} BuzZer. All rights reserved.</p>
           <div className="mt-2 flex justify-center space-x-4 text-xs">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <span>|</span>

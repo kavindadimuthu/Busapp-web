@@ -1,33 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBus, FaTimes } from 'react-icons/fa';
 import { MdMenu } from 'react-icons/md';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Handle scroll event to change header styling
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if page is scrolled past hero section (approx 200px)
+      const scrolled = window.scrollY > 200;
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <header className="relative top-0 z-50 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
-      {/* Top navigation bar */}
+    <header 
+      className={`fixed top-0 w-full z-50 transition-all duration-300 
+      ${isScrolled 
+        ? 'bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg' 
+        : 'bg-transparent text-white'}`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <FaBus className="text-3xl mr-2 text-white" />
-            <h1 className="text-2xl font-bold">BusConnect</h1>
+            {/* <FaBus className={`text-3xl mr-2 ${isScrolled ? 'text-white' : 'text-white'}`} /> */}
+            <h1 className="text-2xl font-bold relative mr-[-10px]">Buz</h1>
+            <img src="/silhouette-bus-trans.png" alt="" className='w-20 h-20' />
+            <h1 className="text-2xl font-bold ml-[-8px]">zer</h1>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a className="hover:text-blue-200 transition-colors font-medium" href="#">Home</a>
-            <a className="hover:text-blue-200 transition-colors font-medium" href="#">Routes</a>
-            <a className="hover:text-blue-200 transition-colors font-medium" href="#">Schedules</a>
-            <a className="hover:text-blue-200 transition-colors font-medium" href="#">Support</a>
-            <a className="hover:text-blue-200 transition-colors font-medium" href="#">About</a>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="/">Home</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="/journeys">Routes</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">Schedules</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">Support</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">About</Link>
           </nav>
           
           {/* Mobile menu button */}
           <button 
-            className="md:hidden flex items-center text-white"
+            className={`md:hidden flex items-center ${isScrolled ? 'text-blue-700' : 'text-white'}`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -41,23 +63,14 @@ const Header = () => {
       </div>
       
       {/* Mobile Navigation */}
-      <div className={`md:hidden bg-blue-800 ${isMenuOpen ? 'block' : 'hidden'}`}>
+      <div className={`md:hidden ${isScrolled ? 'bg-white text-blue-900' : 'bg-blue-800 text-white'} ${isMenuOpen ? 'block' : 'hidden'}`}>
         <nav className="flex flex-col px-4 pt-2 pb-4 space-y-3">
-          <a className="hover:bg-blue-700 py-2 px-3 rounded transition-colors" href="#">Home</a>
-          <a className="hover:bg-blue-700 py-2 px-3 rounded transition-colors" href="#">Routes</a>
-          <a className="hover:bg-blue-700 py-2 px-3 rounded transition-colors" href="#">Schedules</a>
-          <a className="hover:bg-blue-700 py-2 px-3 rounded transition-colors" href="#">Support</a>
-          <a className="hover:bg-blue-700 py-2 px-3 rounded transition-colors" href="#">About</a>
+          <Link className={`hover:${isScrolled ? 'bg-blue-100' : 'bg-blue-700'} py-2 px-3 rounded transition-colors`} to="/">Home</Link>
+          <Link className={`hover:${isScrolled ? 'bg-blue-100' : 'bg-blue-700'} py-2 px-3 rounded transition-colors`} to="/journeys">Routes</Link>
+          <Link className={`hover:${isScrolled ? 'bg-blue-100' : 'bg-blue-700'} py-2 px-3 rounded transition-colors`} to="#">Schedules</Link>
+          <Link className={`hover:${isScrolled ? 'bg-blue-100' : 'bg-blue-700'} py-2 px-3 rounded transition-colors`} to="#">Support</Link>
+          <Link className={`hover:${isScrolled ? 'bg-blue-100' : 'bg-blue-700'} py-2 px-3 rounded transition-colors`} to="#">About</Link>
         </nav>
-      </div>
-
-      {/* Hero section */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">Sri Lanka Bus Schedules</h2>
-          <p className="text-blue-100 mb-6">Find the perfect route for your journey across the island</p>
-          
-        </div>
       </div>
     </header>
   );

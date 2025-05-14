@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import SearchForm from '../components/SearchForm';
+import SearchSection from '../components/SearchSection';
+import FilterSection from '../components/FilterSection';
 import Pagination from '../components/shared/Pagination';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -24,6 +25,10 @@ const Journeys = () => {
     sort_order?: string;
   }>({});
 
+  // State for tracking search and filter parameters separately
+  const [basicSearchParams, setBasicSearchParams] = useState<{[key: string]: any}>({});
+  const [filterParams, setFilterParams] = useState<{[key: string]: any}>({});
+
   // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -38,20 +43,43 @@ const Journeys = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle search form submission
-  const handleSearch = async (params: any) => {
-    const updatedParams = {
+  // Handle basic search form submission
+  const handleSearch = (params: any) => {
+    setBasicSearchParams(params);
+    
+    // Combine basic search parameters with existing filter parameters
+    const combinedParams = {
       ...params,
+      ...filterParams,
       sort_by: sortBy,
       sort_order: sortOrder
     };
-    setSearchParams(updatedParams);
+    
+    setSearchParams(combinedParams);
     setCurrentPage(1); // Reset to first page on new search
-    await fetchJourneys(updatedParams, 1);
+    fetchJourneys(combinedParams, 1);
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (params: any) => {
+    setFilterParams(params);
+    
+    // Only trigger a new search if we already have basic search parameters
+    if (Object.keys(basicSearchParams).length > 0) {
+      const combinedParams = {
+        ...basicSearchParams,
+        ...params,
+        sort_by: sortBy,
+        sort_order: sortOrder
+      };
+      
+      setSearchParams(combinedParams);
+      fetchJourneys(combinedParams, currentPage);
+    }
   };
 
   // Handle sort change
-  const handleSortChange = async (newSortBy: string, newSortOrder: string) => {
+  const handleSortChange = (newSortBy: string, newSortOrder: string) => {
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
     
@@ -62,20 +90,20 @@ const Journeys = () => {
     };
     
     setSearchParams(updatedParams);
-    await fetchJourneys(updatedParams, currentPage);
+    fetchJourneys(updatedParams, currentPage);
   };
 
   // Handle page change
-  const handlePageChange = async (page: number) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    await fetchJourneys(searchParams, page);
+    fetchJourneys(searchParams, page);
   };
 
   // Handle items per page change
-  const handleItemsPerPageChange = async (itemsCount: number) => {
+  const handleItemsPerPageChange = (itemsCount: number) => {
     setItemsPerPage(itemsCount);
     setCurrentPage(1); // Reset to first page when changing items per page
-    await fetchJourneys(searchParams, 1, itemsCount);
+    fetchJourneys(searchParams, 1, itemsCount);
   };
 
   // Fetch journeys from API
@@ -122,32 +150,100 @@ const Journeys = () => {
   return (
     <>
       <Header/>
+      
+      {/* Hero Section with Search Form */}
+      <div className="relative bg-gradient-to-r from-blue-800 to-blue-900 text-white pt-16" 
+           style={{
+             backgroundImage: "url('/medium-vecteezy_futuristic-electric-bus.jpg')",
+             backgroundSize: 'cover',
+             backgroundPosition: 'center'
+           }}>
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black opacity-60"></div>
+        
+        {/* Content */}
+        <div className="container mx-auto px-4 py-16 relative z-10">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">Sri Lanka Bus Schedules</h2>
+            <p className="text-blue-100 mb-6">Find the perfect route for your journey across the island</p>
+          </div>
+          
+          {/* Search form inside hero section */}
+          <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+            <SearchSection onSearch={handleSearch} />
+          </div>
+        </div>
+      </div>
+      
+      {/* Main content - 2 column layout */}
       <div className="container mx-auto py-8 px-4">
-        <SearchForm 
-          onSearch={handleSearch} 
-          totalResults={totalItems} 
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortChange={handleSortChange}
-        />
-        
-        {/* Journey List Component */}
-        <JourneyList 
-          journeys={journeys}
-          isLoading={isLoading}
-          error={error}
-        />
-        
-        {/* Pagination - only show if we have results and more than one page */}
-        {!isLoading && totalItems > 0 && (
-          <Pagination 
-            totalItems={totalItems}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-            onItemsPerPageChange={handleItemsPerPageChange}
-          />
-        )}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Left sidebar - Filter section */}
+          <div className="md:w-1/4">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 sticky top-24">
+              <h3 className="text-xl font-semibold px-5 pt-5 pb-2">Filter Options</h3>
+              <FilterSection 
+                onFilterChange={handleFilterChange}
+                totalResults={totalItems}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
+                vertical={true} // New prop for vertical layout
+              />
+            </div>
+          </div>
+          
+          {/* Right content - Journey list and pagination */}
+          <div className="md:w-3/4">
+            {/* Results info and sort section */}
+            {totalItems > 0 && (
+              <div className="flex justify-between items-center mb-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                <div className="font-medium text-gray-700">
+                  {totalItems} {totalItems === 1 ? "journey" : "journeys"} found
+                </div>
+                
+                <div className="flex items-center">
+                  <label htmlFor="sort" className="mr-2 text-gray-600 font-medium">Sort by:</label>
+                  <select
+                    id="sort"
+                    value={`${sortBy}-${sortOrder}`}
+                    onChange={(e) => {
+                      const [newSortBy, newSortOrder] = e.target.value.split('-');
+                      handleSortChange(newSortBy, newSortOrder);
+                    }}
+                    className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                  >
+                    <option value="departure_time-ASC">Departure Time</option>
+                    <option value="arrival_time-ASC">Arrival Time</option>
+                    <option value="fare-ASC">Lowest Fare</option>
+                    <option value="fare-DESC">Highest Fare</option>
+                    <option value="bus_type-ASC">Bus Type</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            
+            {/* Journey List */}
+            <JourneyList 
+              journeys={journeys}
+              isLoading={isLoading}
+              error={error}
+            />
+            
+            {/* Pagination */}
+            {!isLoading && totalItems > 0 && (
+              <div className="mt-6">
+                <Pagination 
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <Footer/>
     </>
