@@ -1,9 +1,9 @@
 import axios from 'axios';
-import type { Stop, Journey, JourneyResponse } from './type';
+import type { Stop, Journey, JourneyResponse, JourneySearchParams } from './type';
 import { backendUrl } from './config'; // Adjust the import based on your project structure
 
 // API base URL - this should be from your environment variables in a real app
-const API_BASE_URL =  backendUrl// adjust as needed
+const API_BASE_URL = backendUrl; // adjust as needed
 
 // Get all stops
 export const getStops = async (): Promise<Stop[]> => {
@@ -17,11 +17,11 @@ export const getStops = async (): Promise<Stop[]> => {
 };
 
 // Search journeys with pagination and sorting
-export const searchJourneys = async (params: any): Promise<JourneyResponse> => {
+export const searchJourneys = async (params: JourneySearchParams): Promise<JourneyResponse> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/journey`, { params });
     console.log('API response:', response.data);
-    
+
     // Return full pagination data from the backend
     return {
       journeys: response.data.journeys || [],

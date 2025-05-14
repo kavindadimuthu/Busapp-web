@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBus, FaTimes } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 import { MdMenu } from 'react-icons/md';
 
 const Header = () => {

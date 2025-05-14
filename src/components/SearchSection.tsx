@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { FaSearch, FaMapMarkerAlt, FaCalendarAlt, FaExchangeAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { getStops } from "../utils/apiHelper";
-import type { Stop } from "../utils/type";
+import type { Stop, JourneySearchParams } from "../utils/type";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, isToday } from "date-fns";
 
 interface SearchSectionProps {
-  onSearch: (params: any) => void;
+  onSearch: (params: JourneySearchParams) => void;
+  simplified?: boolean;
 }
 
 const SearchSection = ({ onSearch }: SearchSectionProps) => {
@@ -25,8 +26,8 @@ const SearchSection = ({ onSearch }: SearchSectionProps) => {
       try {
         const stopsData = await getStops();
         setStops(stopsData);
-      } catch (error) {
-        console.error("Error fetching stops:", error);
+      } catch {
+          console.error("Error fetching stops");
       }
     };
     fetchStops();
@@ -50,7 +51,7 @@ const SearchSection = ({ onSearch }: SearchSectionProps) => {
     try {
       const dateObj = new Date(date);
       return format(dateObj, "MMM dd, yyyy");
-    } catch (error) {
+    } catch {
       return "";
     }
   };
@@ -174,16 +175,6 @@ const SearchSection = ({ onSearch }: SearchSectionProps) => {
     }
   };
 
-  // Handle date change
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDate(e.target.value);
-    // Keep the date picker open to show the selected date
-  };
-
-  // Close date picker after selection is made
-  const handleDateSelect = () => {
-    setShowDatePicker(false);
-  };
 
   // Swap source and destination
   const swapLocations = () => {
@@ -316,7 +307,7 @@ const SearchSection = ({ onSearch }: SearchSectionProps) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const params: any = {};
+    const params: JourneySearchParams = {};
     
     // Only send the value if it's set
     if (source) params.source = source;

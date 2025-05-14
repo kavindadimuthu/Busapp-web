@@ -39,13 +39,23 @@ export interface Journey {
 }
 
 // Pagination response type
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse {
   total: number;
   limit: number;
   offset: number;
-  [key: string]: any; // For additional data specific to each endpoint
+  // Add more specific fields if needed
 }
 
-export interface JourneyResponse extends PaginatedResponse<Journey> {
+export interface JourneyResponse extends PaginatedResponse {
   journeys: Journey[];
+}
+
+// Define search params type for journeys
+export interface JourneySearchParams {
+  source?: string;
+  destination?: string;
+  date?: string;
+  limit?: number;
+  offset?: number;
+  [key: string]: string | number | undefined;
 }

@@ -6,47 +6,48 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import JourneyList from '../components/JourneyList';
 import { searchJourneys } from '../utils/apiHelper';
-import type { Journey } from '../utils/type';
+import type { Journey, JourneySearchParams } from '../utils/type';
+
+type FilterParams = {
+  operator?: string;
+  bus_type?: string;
+  route_name?: string;
+  departure_time_from?: string;
+  departure_time_to?: string;
+  arrival_time_from?: string;
+  arrival_time_to?: string;
+  sort_by?: string;
+  sort_order?: string;
+  days_of_week?: string[];
+  [key: string]: string | string[] | number | undefined;
+};
 
 const Journeys = () => {
   // State for search parameters
-  const [searchParams, setSearchParams] = useState<{
-    source?: string;
-    destination?: string;
-    date?: string;
-    operator?: string;
-    bus_type?: string;
-    route_name?: string;
-    departure_time_from?: string;
-    departure_time_to?: string;
-    arrival_time_from?: string;
-    arrival_time_to?: string;
-    sort_by?: string;
-    sort_order?: string;
-  }>({});
+  const [searchParams, setSearchParams] = useState<JourneySearchParams & FilterParams>({});
 
   // State for tracking search and filter parameters separately
-  const [basicSearchParams, setBasicSearchParams] = useState<{[key: string]: any}>({});
-  const [filterParams, setFilterParams] = useState<{[key: string]: any}>({});
+  const [basicSearchParams, setBasicSearchParams] = useState<JourneySearchParams>({});
+  const [filterParams, setFilterParams] = useState<FilterParams>({});
 
   // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
-  
+
   // State for sorting
   const [sortBy, setSortBy] = useState('departure_time');
   const [sortOrder, setSortOrder] = useState('ASC');
-  
+
   // State for search results and loading status
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Handle basic search form submission
-  const handleSearch = (params: any) => {
+  const handleSearch = (params: JourneySearchParams) => {
     setBasicSearchParams(params);
-    
+
     // Combine basic search parameters with existing filter parameters
     const combinedParams = {
       ...params,
@@ -54,16 +55,16 @@ const Journeys = () => {
       sort_by: sortBy,
       sort_order: sortOrder
     };
-    
+
     setSearchParams(combinedParams);
     setCurrentPage(1); // Reset to first page on new search
     fetchJourneys(combinedParams, 1);
   };
 
   // Handle filter changes
-  const handleFilterChange = (params: any) => {
+  const handleFilterChange = (params: FilterParams) => {
     setFilterParams(params);
-    
+
     // Only trigger a new search if we already have basic search parameters
     if (Object.keys(basicSearchParams).length > 0) {
       const combinedParams = {
@@ -72,7 +73,7 @@ const Journeys = () => {
         sort_by: sortBy,
         sort_order: sortOrder
       };
-      
+
       setSearchParams(combinedParams);
       fetchJourneys(combinedParams, currentPage);
     }
@@ -82,13 +83,13 @@ const Journeys = () => {
   const handleSortChange = (newSortBy: string, newSortOrder: string) => {
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
-    
+
     const updatedParams = {
       ...searchParams,
       sort_by: newSortBy,
       sort_order: newSortOrder
     };
-    
+
     setSearchParams(updatedParams);
     fetchJourneys(updatedParams, currentPage);
   };
@@ -108,13 +109,13 @@ const Journeys = () => {
 
   // Fetch journeys from API
   const fetchJourneys = async (
-    params: any, 
-    page: number = currentPage, 
+    params: JourneySearchParams & FilterParams,
+    page: number = currentPage,
     perPage: number = itemsPerPage
   ) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Convert time windows to actual time ranges if needed
       const apiParams = {
@@ -128,11 +129,11 @@ const Journeys = () => {
       // Call the API helper function
       const result = await searchJourneys(apiParams);
       setJourneys(result.journeys);
-      
+
       // Use the total from the API response
       setTotalItems(result.total);
       setItemsPerPage(result.limit);
-      
+
     } catch (err) {
       console.error('Error fetching journeys:', err);
       setError('Failed to fetch journeys. Please try again later.');
@@ -141,7 +142,7 @@ const Journeys = () => {
       setIsLoading(false);
     }
   };
-  
+
   // Initial load - optional, can be removed if you don't want to load data on first render
   useEffect(() => {
     fetchJourneys({ sort_by: sortBy, sort_order: sortOrder });
@@ -150,7 +151,7 @@ const Journeys = () => {
   return (
     <>
       <Header/>
-      
+
       {/* Hero Section with Search Form */}
       <div className="relative bg-gradient-to-r from-blue-800 to-blue-900 text-white pt-16" 
            style={{
@@ -160,21 +161,21 @@ const Journeys = () => {
            }}>
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black opacity-60"></div>
-        
+
         {/* Content */}
         <div className="container mx-auto px-4 py-16 relative z-10">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">Sri Lanka Bus Schedules</h2>
             <p className="text-blue-100 mb-6">Find the perfect route for your journey across the island</p>
           </div>
-          
+
           {/* Search form inside hero section */}
           <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
             <SearchSection onSearch={handleSearch} />
           </div>
         </div>
       </div>
-      
+
       {/* Main content - 2 column layout */}
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col md:flex-row gap-6">
@@ -192,7 +193,7 @@ const Journeys = () => {
               />
             </div>
           </div>
-          
+
           {/* Right content - Journey list and pagination */}
           <div className="md:w-3/4">
             {/* Results info and sort section */}
@@ -201,7 +202,7 @@ const Journeys = () => {
                 <div className="font-medium text-gray-700">
                   {totalItems} {totalItems === 1 ? "journey" : "journeys"} found
                 </div>
-                
+
                 <div className="flex items-center">
                   <label htmlFor="sort" className="mr-2 text-gray-600 font-medium">Sort by:</label>
                   <select
@@ -222,14 +223,14 @@ const Journeys = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Journey List */}
             <JourneyList 
               journeys={journeys}
               isLoading={isLoading}
               error={error}
             />
-            
+
             {/* Pagination */}
             {!isLoading && totalItems > 0 && (
               <div className="mt-6">

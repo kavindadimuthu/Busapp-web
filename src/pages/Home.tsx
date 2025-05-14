@@ -1,17 +1,12 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchSection from '../components/SearchSection';
+import type { JourneySearchParams } from '../utils/type';
 
 const Home = () => {
-  const [searchParams, setSearchParams] = useState<{
-    source?: string;
-    destination?: string;
-    date?: string;
-  }>({});
 
-  const handleSearch = (params: any) => {
+  const handleSearch = (params: JourneySearchParams) => {
     // Navigate to journeys page with search params
     window.location.href = `/journeys?source=${params.source || ''}&destination=${params.destination || ''}&date=${params.date || ''}`;
   };

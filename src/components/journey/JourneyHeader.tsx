@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBus, FaArrowRight, FaCalendarAlt } from 'react-icons/fa';
+import { FaBus, FaArrowRight } from 'react-icons/fa';
 
 interface JourneyHeaderProps {
   busName: string;

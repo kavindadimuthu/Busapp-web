@@ -61,9 +61,20 @@ const timeWindowToRange = (window: string) => {
   }
 };
 
+interface FilterParams {
+  operator?: string;
+  bus_type?: string;
+  days_of_week?: string[];
+  departure_time_from?: string;
+  departure_time_to?: string;
+  arrival_time_from?: string;
+  arrival_time_to?: string;
+  [key: string]: string | string[] | undefined;
+}
+
 // Add a 'vertical' prop to the FilterSectionProps interface
 interface FilterSectionProps {
-  onFilterChange: (filters: any) => void;
+  onFilterChange: (filters: FilterParams) => void;
   totalResults?: number;
   sortBy: string;
   sortOrder: string;
@@ -201,7 +212,7 @@ const FilterSection = ({
     const formattedDaysOfWeek = daysOfWeek.map((day) => day.substring(0, 3));
 
     // Prepare filter parameters
-    const params: any = {
+    const params: FilterParams = {
       operator: operators.length > 0 ? operators[0] : undefined,
       bus_type: busTypes.length > 0 ? busTypes[0] : undefined,
       days_of_week:

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBus, FaMapMarkerAlt, FaCircle, FaExchangeAlt } from 'react-icons/fa';
+import { FaBus, FaMapMarkerAlt, FaCircle } from 'react-icons/fa';
 
 interface Stop {
   id: string;
