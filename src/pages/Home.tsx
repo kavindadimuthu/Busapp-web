@@ -13,10 +13,10 @@ const Home = () => {
 
   // Popular destinations in Sri Lanka
   const popularDestinations = [
-    { name: 'Colombo', image: '/images/colombo.jpg', description: 'Capital city with vibrant culture' },
-    { name: 'Kandy', image: '/images/kandy.jpg', description: 'Historical temple city' },
-    { name: 'Galle', image: '/images/galle.jpg', description: 'Colonial fort city by the coast' },
-    { name: 'Nuwara Eliya', image: '/images/nuwara-eliya.jpg', description: 'Tea country in the highlands' },
+    { name: 'Colombo', image: '/cities/colombo.jpg', description: 'Capital city with vibrant culture' },
+    { name: 'Kandy', image: '/cities/kandy.jpg', description: 'Historical temple city' },
+    { name: 'Galle', image: '/cities/galle.jpg', description: 'Colonial fort city by the coast' },
+    { name: 'Nuwara Eliya', image: '/cities/nuwaraeliya.jpg', description: 'Tea country in the highlands' },
   ];
 
   // App features
@@ -73,9 +73,6 @@ const Home = () => {
                     src={destination.image} 
                     alt={destination.name} 
                     className="w-full h-full object-cover"
-                    onError={e => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Sri+Lanka';
-                    }}
                   />
                 </div>
                 <div className="p-5">
