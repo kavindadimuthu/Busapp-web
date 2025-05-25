@@ -41,8 +41,8 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="/">Home</Link>
-            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="/journeys">Routes</Link>
-            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">Schedules</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="/journeys">Schedules</Link>
+            <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">Routes</Link>
             <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">Support</Link>
             <Link className={`hover:${isScrolled ? 'text-blue-700' : 'text-blue-200'} transition-colors font-medium`} to="#">About</Link>
           </nav>
