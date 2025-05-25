@@ -44,7 +44,10 @@ const Journey = () => {
 
   return (
     <>
-      <Header />
+      <div className="fixed top-0 left-0 w-full h-16 z-50 bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg">
+        <Header />
+      </div>
+      
       <div className="pt-16">
         {/* Empty div for spacing to account for fixed header */}
         <div className="h-4"></div>
@@ -71,14 +74,14 @@ const Journey = () => {
                 routeName={journey.route_name || "Unknown Route"}
               />
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                <div className="lg:col-span-3">
                   <JourneyRoute
                     stops={journey.stops || []}
                     stopTimes={journey.stop_times || []}
                   />
                 </div>
-                <div>
+                <div className="lg:col-span-2">
                   <JourneySchedule
                     departureTime={journey.departure_time || ""}
                     arrivalTime={journey.arrival_time || ""}

@@ -1,5 +1,6 @@
 export interface Stop {
   id: string;
+  route_stop_id: string;
   name: string;
   city: string;
   location: string;
@@ -60,3 +61,8 @@ export type JourneySearchParams = {
   days_of_week?: string[]; // allow string[]
   [key: string]: string | string[] | number | undefined;
 };
+
+// Response type for operator types API
+export interface OperatorTypesResponse {
+  types: string[];
+}

@@ -3,6 +3,7 @@ import { FaBus, FaMapMarkerAlt, FaCircle } from 'react-icons/fa';
 
 interface Stop {
   id: string;
+  route_stop_id: string;
   name: string;
   city: string;
   location: string;
@@ -45,7 +46,8 @@ const JourneyRoute: React.FC<JourneyRouteProps> = ({ stops, stopTimes }) => {
       
       <div className="relative">
         {stops.map((stop, index) => {
-          const stopTime = findStopTime(stop.id);
+          console.log('Stop:', stop);
+          const stopTime = findStopTime(stop.route_stop_id);
           const isFirst = index === 0;
           const isLast = index === stops.length - 1;
           

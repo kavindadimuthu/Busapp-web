@@ -101,7 +101,7 @@ const JourneyCard: React.FC<JourneyCardProps> = ({ journey }) => {
         </div>
 
         {/* Amenities and Price */}
-        <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+        {/* <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
           <div className="flex space-x-3">
             {journey.bus_type === 'AC' && (
               <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
@@ -126,7 +126,7 @@ const JourneyCard: React.FC<JourneyCardProps> = ({ journey }) => {
             </div>
             <div className="text-xs text-gray-500">PER SEAT</div>
           </div>
-        </div>
+        </div> */}
 
         {/* Days of Operation */}
         {journey.days_of_week && journey.days_of_week.length > 0 && (

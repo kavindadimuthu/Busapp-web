@@ -4,7 +4,10 @@ import {
   FaSort,
   FaChevronDown,
   FaChevronUp,
+  FaAngleDown,
+  FaAngleUp,
 } from "react-icons/fa";
+import { getOperatorTypes, getBusTypes } from "../utils/apiHelper";
 
 // Sort options updated for the journey endpoint fields
 const SORT_OPTIONS = [
@@ -17,18 +20,7 @@ const SORT_OPTIONS = [
   { value: "route_name", label: "Route Name", order: "ASC" },
 ];
 
-// Mock data for dropdowns (could be replaced with API data)
-const MOCK_OPERATORS = [
-  "National Transport Board",
-  "Highway Express",
-  "Island Routes",
-  "Ceylon Travel",
-  "Coastal Lines",
-  "Mountain Movers",
-  "ABC Travels",
-];
-
-const BUS_TYPES = ["AC", "Non-AC", "Express", "Local"];
+// Remove the hardcoded BUS_TYPES array and fetch from API instead
 const TIME_WINDOWS = [
   "12 AM - 6 AM",
   "6 AM - 12 PM",
@@ -92,11 +84,17 @@ const FilterSection = ({
 }: FilterSectionProps) => {
   // Filter states
   const [busTypes, setBusTypes] = useState<string[]>([]);
+  const [availableBusTypes, setAvailableBusTypes] = useState<string[]>([]);
   const [operators, setOperators] = useState<string[]>([]);
+  const [operatorTypes, setOperatorTypes] = useState<string[]>([]);
   const [departureWindows, setDepartureWindows] = useState<string[]>([]);
   const [arrivalWindows, setArrivalWindows] = useState<string[]>([]);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoadingOperators, setIsLoadingOperators] = useState(false);
+  const [operatorError, setOperatorError] = useState<string | null>(null);
+  const [isLoadingBusTypes, setIsLoadingBusTypes] = useState(false);
+  const [busTypesError, setBusTypesError] = useState<string | null>(null);
 
   // Filter visibility states
   const [showFilters, setShowFilters] = useState(true);
@@ -104,6 +102,72 @@ const FilterSection = ({
   // Dropdown states for desktop view
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  // Add state to track which sections are expanded in vertical layout
+  const [expandedSections, setExpandedSections] = useState<{[key: string]: boolean}>({
+    operators: true,
+    busTypes: true,
+    departureTime: false,
+    arrivalTime: false,
+    daysOfWeek: false
+  });
+  
+  // Function to toggle section expansion
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+    
+    // If we're expanding a section, re-apply filters to ensure they're active
+    if (!expandedSections[section]) {
+      applyFilters();
+    }
+  };
+
+  // Fetch operator types from API
+  useEffect(() => {
+    const fetchOperatorTypes = async () => {
+      setIsLoadingOperators(true);
+      setOperatorError(null);
+      console.log("Fetching operator types...");
+      try {
+        const types = await getOperatorTypes();
+        console.log("Fetched operator types:", types);
+        setOperatorTypes(types);
+      } catch (error) {
+        console.error('Error fetching operator types:', error);
+        setOperatorError('Failed to load operator types');
+        setOperatorTypes([]);
+      } finally {
+        setIsLoadingOperators(false);
+      }
+    };
+    
+    fetchOperatorTypes();
+  }, []);
+  
+  // Fetch bus types from API
+  useEffect(() => {
+    const fetchBusTypes = async () => {
+      setIsLoadingBusTypes(true);
+      setBusTypesError(null);
+      console.log("Fetching bus types...");
+      try {
+        const types = await getBusTypes();
+        console.log("Fetched bus types:", types);
+        setAvailableBusTypes(types);
+      } catch (error) {
+        console.error('Error fetching bus types:', error);
+        setBusTypesError('Failed to load bus types');
+        setAvailableBusTypes([]);
+      } finally {
+        setIsLoadingBusTypes(false);
+      }
+    };
+    
+    fetchBusTypes();
+  }, []);
 
   // Check if mobile layout
   useEffect(() => {
@@ -154,7 +218,14 @@ const FilterSection = ({
     }
 
     setItems(newItems);
-    applyFilters();
+    
+    // Use setTimeout to ensure state is updated before applying filters
+    setTimeout(() => {
+      applyFilters(newItems, item, currentItems === busTypes ? 'busTypes' : 
+        currentItems === operators ? 'operators' : 
+        currentItems === departureWindows ? 'departureWindows' : 
+        currentItems === arrivalWindows ? 'arrivalWindows' : 'daysOfWeek');
+    }, 0);
   };
 
   // Process departure and arrival time windows to API format
@@ -205,20 +276,67 @@ const FilterSection = ({
   };
 
   // Apply filters
-  const applyFilters = () => {
+  const applyFilters = (
+    updatedItems?: string[],
+    _updatedItem?: string,
+    filterType?: string
+  ) => {
     const timeRanges = processTimeWindows();
+    
+    // Use the updated items if provided, otherwise use the current state
+    let currentBusTypes = busTypes;
+    let currentOperators = operators;
+    let currentDaysOfWeek = daysOfWeek;
+    let currentDepartureWindows = departureWindows;
+    let currentArrivalWindows = arrivalWindows;
+    
+    if (updatedItems && filterType) {
+      switch (filterType) {
+        case 'busTypes':
+          currentBusTypes = updatedItems;
+          break;
+        case 'operators':
+          currentOperators = updatedItems;
+          break;
+        case 'departureWindows':
+          currentDepartureWindows = updatedItems;
+          break;
+        case 'arrivalWindows':
+          currentArrivalWindows = updatedItems;
+          break;
+        case 'daysOfWeek':
+          currentDaysOfWeek = updatedItems;
+          break;
+      }
+    }
 
     // Convert to short day format used by the API
-    const formattedDaysOfWeek = daysOfWeek.map((day) => day.substring(0, 3));
+    const formattedDaysOfWeek = currentDaysOfWeek.map((day) => day.substring(0, 3));
 
     // Prepare filter parameters
     const params: FilterParams = {
-      operator: operators.length > 0 ? operators[0] : undefined,
-      bus_type: busTypes.length > 0 ? busTypes[0] : undefined,
+      operator: currentOperators.length > 0 ? currentOperators[0] : undefined,
+      bus_type: currentBusTypes.length > 0 ? currentBusTypes[0] : undefined,
       days_of_week:
         formattedDaysOfWeek.length > 0 ? formattedDaysOfWeek : undefined,
-      ...timeRanges,
     };
+
+    // Add time ranges only if they have values
+    if (currentDepartureWindows.length > 0) {
+      const depRanges = {
+        departure_time_from: timeRanges.departure_time_from,
+        departure_time_to: timeRanges.departure_time_to,
+      };
+      Object.assign(params, depRanges);
+    }
+
+    if (currentArrivalWindows.length > 0) {
+      const arrRanges = {
+        arrival_time_from: timeRanges.arrival_time_from,
+        arrival_time_to: timeRanges.arrival_time_to,
+      };
+      Object.assign(params, arrRanges);
+    }
 
     // Filter out undefined values
     Object.keys(params).forEach((key) => {
@@ -239,7 +357,7 @@ const FilterSection = ({
     setArrivalWindows([]);
     setDaysOfWeek([]);
 
-    // Clear filters in parent component
+    // Clear filters in parent component - call immediately
     onFilterChange({});
   };
 
@@ -278,148 +396,223 @@ const FilterSection = ({
     }
   };
 
+  // Render operator type list with loading and error states
+  const renderOperatorTypes = () => {
+    if (isLoadingOperators) {
+      return <div className="text-gray-500 text-sm">Loading operator types...</div>;
+    }
+    
+    if (operatorError) {
+      return <div className="text-red-500 text-sm">{operatorError}</div>;
+    }
+    
+    if (operatorTypes.length === 0) {
+      return <div className="text-gray-500 text-sm">No operator types available</div>;
+    }
+    
+    return operatorTypes.map((type) => (
+      <div key={type} className="flex items-center">
+        <input
+          type="checkbox"
+          id={`operator-${type}`}
+          checked={operators.includes(type)}
+          onChange={() => toggleSelection(type, operators, setOperators)}
+          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label
+          htmlFor={`operator-${type}`}
+          className="ml-2 text-gray-700 text-sm"
+        >
+          {type}
+        </label>
+      </div>
+    ));
+  };
+
+  // Render bus type list with loading and error states
+  const renderBusTypes = () => {
+    if (isLoadingBusTypes) {
+      return <div className="text-gray-500 text-sm">Loading bus types...</div>;
+    }
+    
+    if (busTypesError) {
+      return <div className="text-red-500 text-sm">{busTypesError}</div>;
+    }
+    
+    if (availableBusTypes.length === 0) {
+      return <div className="text-gray-500 text-sm">No bus types available</div>;
+    }
+    
+    return availableBusTypes.map((type) => (
+      <div key={type} className="flex items-center">
+        <input
+          type="checkbox"
+          id={`type-${type}`}
+          checked={busTypes.includes(type)}
+          onChange={() => toggleSelection(type, busTypes, setBusTypes)}
+          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label
+          htmlFor={`type-${type}`}
+          className="ml-2 text-gray-700 text-sm"
+        >
+          {type}
+        </label>
+      </div>
+    ));
+  };
+
   return (
     <div className="space-y-4">
-      {/* In vertical layout, each filter section is stacked */}
+      {/* In vertical layout, each filter section is stacked and collapsible */}
       {vertical ? (
         // Vertical layout for sidebar
         <>
-          {/* Operators Section */}
-          <div className="py-4 px-5 border-b border-gray-100">
-            <h4 className="font-medium text-gray-700 mb-3">Operators</h4>
-            <div className="space-y-2">
-              {MOCK_OPERATORS.map((operator) => (
-                <div key={operator} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`operator-${operator}`}
-                    checked={operators.includes(operator)}
-                    onChange={() =>
-                      toggleSelection(operator, operators, setOperators)
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`operator-${operator}`}
-                    className="ml-2 text-gray-700 text-sm"
-                  >
-                    {operator}
-                  </label>
-                </div>
-              ))}
+          {/* Operators Section - Collapsible */}
+          <div className="py-2 px-5 border-b border-gray-100">
+            <div 
+              className="flex justify-between items-center cursor-pointer py-2" 
+              onClick={() => toggleSection('operators')}
+            >
+              <h4 className="font-medium text-gray-700">Operators</h4>
+              {expandedSections.operators ? <FaAngleUp /> : <FaAngleDown />}
             </div>
+            
+            {expandedSections.operators && (
+              <div className="space-y-2 mt-3 pl-1">
+                {renderOperatorTypes()}
+              </div>
+            )}
           </div>
 
-          {/* Bus Types Section */}
-          <div className="py-4 px-5 border-b border-gray-100">
-            <h4 className="font-medium text-gray-700 mb-3">Bus Type</h4>
-            <div className="space-y-2">
-              {BUS_TYPES.map((type) => (
-                <div key={type} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`type-${type}`}
-                    checked={busTypes.includes(type)}
-                    onChange={() =>
-                      toggleSelection(type, busTypes, setBusTypes)
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`type-${type}`}
-                    className="ml-2 text-gray-700 text-sm"
-                  >
-                    {type}
-                  </label>
-                </div>
-              ))}
+          {/* Bus Types Section - Collapsible */}
+          <div className="py-2 px-5 border-b border-gray-100">
+            <div 
+              className="flex justify-between items-center cursor-pointer py-2" 
+              onClick={() => toggleSection('busTypes')}
+            >
+              <h4 className="font-medium text-gray-700">Bus Type</h4>
+              {expandedSections.busTypes ? <FaAngleUp /> : <FaAngleDown />}
             </div>
+            
+            {expandedSections.busTypes && (
+              <div className="space-y-2 mt-3 pl-1">
+                {renderBusTypes()}
+              </div>
+            )}
           </div>
 
-          {/* Departure Time Section */}
-          <div className="py-4 px-5 border-b border-gray-100">
-            <h4 className="font-medium text-gray-700 mb-3">Departure Time</h4>
-            <div className="space-y-2">
-              {TIME_WINDOWS.map((window) => (
-                <div key={window} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`departure-${window}`}
-                    checked={departureWindows.includes(window)}
-                    onChange={() =>
-                      toggleSelection(
-                        window,
-                        departureWindows,
-                        setDepartureWindows
-                      )
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`departure-${window}`}
-                    className="ml-2 text-gray-700 text-sm"
-                  >
-                    {window}
-                  </label>
-                </div>
-              ))}
+          {/* Departure Time Section - Collapsible */}
+          <div className="py-2 px-5 border-b border-gray-100">
+            <div 
+              className="flex justify-between items-center cursor-pointer py-2" 
+              onClick={() => toggleSection('departureTime')}
+            >
+              <h4 className="font-medium text-gray-700">Departure Time</h4>
+              {expandedSections.departureTime ? <FaAngleUp /> : <FaAngleDown />}
             </div>
+            
+            {expandedSections.departureTime && (
+              <div className="space-y-2 mt-3 pl-1">
+                {TIME_WINDOWS.map((window) => (
+                  <div key={window} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`departure-${window}`}
+                      checked={departureWindows.includes(window)}
+                      onChange={() =>
+                        toggleSelection(
+                          window,
+                          departureWindows,
+                          setDepartureWindows
+                        )
+                      }
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`departure-${window}`}
+                      className="ml-2 text-gray-700 text-sm"
+                    >
+                      {window}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Arrival Time Section */}
-          <div className="py-4 px-5 border-b border-gray-100">
-            <h4 className="font-medium text-gray-700 mb-3">Arrival Time</h4>
-            <div className="space-y-2">
-              {TIME_WINDOWS.map((window) => (
-                <div key={window} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`arrival-${window}`}
-                    checked={arrivalWindows.includes(window)}
-                    onChange={() =>
-                      toggleSelection(
-                        window,
-                        arrivalWindows,
-                        setArrivalWindows
-                      )
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`arrival-${window}`}
-                    className="ml-2 text-gray-700 text-sm"
-                  >
-                    {window}
-                  </label>
-                </div>
-              ))}
+          {/* Arrival Time Section - Collapsible */}
+          <div className="py-2 px-5 border-b border-gray-100">
+            <div 
+              className="flex justify-between items-center cursor-pointer py-2" 
+              onClick={() => toggleSection('arrivalTime')}
+            >
+              <h4 className="font-medium text-gray-700">Arrival Time</h4>
+              {expandedSections.arrivalTime ? <FaAngleUp /> : <FaAngleDown />}
             </div>
+            
+            {expandedSections.arrivalTime && (
+              <div className="space-y-2 mt-3 pl-1">
+                {TIME_WINDOWS.map((window) => (
+                  <div key={window} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`arrival-${window}`}
+                      checked={arrivalWindows.includes(window)}
+                      onChange={() =>
+                        toggleSelection(
+                          window,
+                          arrivalWindows,
+                          setArrivalWindows
+                        )
+                      }
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`arrival-${window}`}
+                      className="ml-2 text-gray-700 text-sm"
+                    >
+                      {window}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Days of Week Section */}
-          <div className="py-4 px-5">
-            <h4 className="font-medium text-gray-700 mb-3">Days of Operation</h4>
-            <div className="space-y-2">
-              {WEEKDAYS.map((day) => (
-                <div key={day} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`day-${day}`}
-                    checked={daysOfWeek.includes(day)}
-                    onChange={() =>
-                      toggleSelection(day, daysOfWeek, setDaysOfWeek)
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`day-${day}`}
-                    className="ml-2 text-gray-700 text-sm"
-                  >
-                    {day}
-                  </label>
-                </div>
-              ))}
+          {/* Days of Week Section - Collapsible */}
+          <div className="py-2 px-5">
+            <div 
+              className="flex justify-between items-center cursor-pointer py-2" 
+              onClick={() => toggleSection('daysOfWeek')}
+            >
+              <h4 className="font-medium text-gray-700">Days of Operation</h4>
+              {expandedSections.daysOfWeek ? <FaAngleUp /> : <FaAngleDown />}
             </div>
+            
+            {expandedSections.daysOfWeek && (
+              <div className="space-y-2 mt-3 pl-1">
+                {WEEKDAYS.map((day) => (
+                  <div key={day} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`day-${day}`}
+                      checked={daysOfWeek.includes(day)}
+                      onChange={() =>
+                        toggleSelection(day, daysOfWeek, setDaysOfWeek)
+                      }
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`day-${day}`}
+                      className="ml-2 text-gray-700 text-sm"
+                    >
+                      {day}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Apply Filters Button */}
@@ -429,7 +622,7 @@ const FilterSection = ({
               onClick={resetFilters}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-200"
             >
-              Apply Filters
+              Reset Filters
             </button>
           </div>
         </>
@@ -499,25 +692,33 @@ const FilterSection = ({
                     </button>
                     {openDropdown === "busType" && (
                       <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg p-3 space-y-2">
-                        {BUS_TYPES.map((type) => (
-                          <div key={type} className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={`type-${type}`}
-                              checked={busTypes.includes(type)}
-                              onChange={() =>
-                                toggleSelection(type, busTypes, setBusTypes)
-                              }
-                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <label
-                              htmlFor={`type-${type}`}
-                              className="ml-2 text-gray-700"
-                            >
-                              {type}
-                            </label>
-                          </div>
-                        ))}
+                        {isLoadingBusTypes ? (
+                          <div className="px-3 py-2 text-gray-500">Loading...</div>
+                        ) : busTypesError ? (
+                          <div className="px-3 py-2 text-red-500">{busTypesError}</div>
+                        ) : availableBusTypes.length === 0 ? (
+                          <div className="px-3 py-2 text-gray-500">No bus types available</div>
+                        ) : (
+                          availableBusTypes.map((type) => (
+                            <div key={type} className="flex items-center">
+                              <input
+                                type="checkbox"
+                                id={`type-${type}`}
+                                checked={busTypes.includes(type)}
+                                onChange={() =>
+                                  toggleSelection(type, busTypes, setBusTypes)
+                                }
+                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                              <label
+                                htmlFor={`type-${type}`}
+                                className="ml-2 text-gray-700"
+                              >
+                                {type}
+                              </label>
+                            </div>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>
@@ -547,32 +748,31 @@ const FilterSection = ({
                     </button>
                     {openDropdown === "operator" && (
                       <div className="absolute z-10 mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-3 max-h-60 overflow-y-auto">
-                        {MOCK_OPERATORS.map((operator) => (
-                          <div
-                            key={operator}
-                            className="flex items-center mb-2"
-                          >
-                            <input
-                              type="checkbox"
-                              id={`operator-desktop-${operator}`}
-                              checked={operators.includes(operator)}
-                              onChange={() =>
-                                toggleSelection(
-                                  operator,
-                                  operators,
-                                  setOperators
-                                )
-                              }
-                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <label
-                              htmlFor={`operator-desktop-${operator}`}
-                              className="ml-2 text-gray-700 text-sm"
-                            >
-                              {operator}
-                            </label>
-                          </div>
-                        ))}
+                        {isLoadingOperators ? (
+                          <div className="px-3 py-2 text-gray-500">Loading...</div>
+                        ) : operatorError ? (
+                          <div className="px-3 py-2 text-red-500">{operatorError}</div>
+                        ) : operatorTypes.length === 0 ? (
+                          <div className="px-3 py-2 text-gray-500">No operator types available</div>
+                        ) : (
+                          operatorTypes.map((type) => (
+                            <div key={type} className="flex items-center mb-2">
+                              <input
+                                type="checkbox"
+                                id={`operator-desktop-${type}`}
+                                checked={operators.includes(type)}
+                                onChange={() => toggleSelection(type, operators, setOperators)}
+                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                              <label
+                                htmlFor={`operator-desktop-${type}`}
+                                className="ml-2 text-gray-700 text-sm"
+                              >
+                                {type}
+                              </label>
+                            </div>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>
@@ -738,25 +938,33 @@ const FilterSection = ({
                   <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <h4 className="font-medium text-gray-700 mb-3">Bus Type</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      {BUS_TYPES.map((type) => (
-                        <div key={type} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`type-${type}`}
-                            checked={busTypes.includes(type)}
-                            onChange={() =>
-                              toggleSelection(type, busTypes, setBusTypes)
-                            }
-                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <label
-                            htmlFor={`type-${type}`}
-                            className="ml-2 text-gray-700"
-                          >
-                            {type}
-                          </label>
-                        </div>
-                      ))}
+                      {isLoadingBusTypes ? (
+                        <div className="text-gray-500">Loading...</div>
+                      ) : busTypesError ? (
+                        <div className="text-red-500">{busTypesError}</div>
+                      ) : availableBusTypes.length === 0 ? (
+                        <div className="text-gray-500">No bus types available</div>
+                      ) : (
+                        availableBusTypes.map((type) => (
+                          <div key={type} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id={`type-${type}`}
+                              checked={busTypes.includes(type)}
+                              onChange={() =>
+                                toggleSelection(type, busTypes, setBusTypes)
+                              }
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor={`type-${type}`}
+                              className="ml-2 text-gray-700"
+                            >
+                              {type}
+                            </label>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
 
@@ -766,25 +974,31 @@ const FilterSection = ({
                       Bus Operator
                     </h4>
                     <div className="space-y-2 max-h-40 overflow-y-auto">
-                      {MOCK_OPERATORS.map((operator) => (
-                        <div key={operator} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`operator-${operator}`}
-                            checked={operators.includes(operator)}
-                            onChange={() =>
-                              toggleSelection(operator, operators, setOperators)
-                            }
-                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <label
-                            htmlFor={`operator-${operator}`}
-                            className="ml-2 text-gray-700"
-                          >
-                            {operator}
-                          </label>
-                        </div>
-                      ))}
+                      {isLoadingOperators ? (
+                        <div className="text-gray-500">Loading...</div>
+                      ) : operatorError ? (
+                        <div className="text-red-500">{operatorError}</div>
+                      ) : operatorTypes.length === 0 ? (
+                        <div className="text-gray-500">No operator types available</div>
+                      ) : (
+                        operatorTypes.map((type) => (
+                          <div key={type} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id={`operator-${type}`}
+                              checked={operators.includes(type)}
+                              onChange={() => toggleSelection(type, operators, setOperators)}
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor={`operator-${type}`}
+                              className="ml-2 text-gray-700"
+                            >
+                              {type}
+                            </label>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
 

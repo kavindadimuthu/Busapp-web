@@ -57,6 +57,7 @@ const Journeys = () => {
     };
 
     setSearchParams(combinedParams);
+    console.log('Combined search params:', combinedParams);
     setCurrentPage(1); // Reset to first page on new search
     fetchJourneys(combinedParams, 1);
   };
@@ -160,7 +161,7 @@ const Journeys = () => {
              backgroundPosition: 'center'
            }}>
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="absolute inset-0 bg-black opacity-50"></div>
 
         {/* Content */}
         <div className="container mx-auto px-4 py-16 relative z-10">

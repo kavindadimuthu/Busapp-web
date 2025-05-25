@@ -45,15 +45,6 @@ const JourneyList: React.FC<JourneyListProps> = ({
 
   return (
     <div className="my-6">
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-800">
-          Available Journeys ({journeys.length})
-        </h2>
-        <div className="text-sm text-gray-600">
-          Prices include all taxes and fees
-        </div>
-      </div>
-
       <div className="space-y-6">
         {journeys.map((journey) => (
           <JourneyCard key={journey.journey_id} journey={journey} />

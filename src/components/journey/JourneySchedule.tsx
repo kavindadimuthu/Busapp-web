@@ -58,12 +58,12 @@ const JourneySchedule: React.FC<JourneyScheduleProps> = ({
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="font-medium text-gray-700 mb-2">Departure Time</h3>
-          <p className="text-2xl font-bold text-blue-700">{formatTime(departureTime)}</p>
+          <p className="text-xl font-bold text-blue-700">{formatTime(departureTime)}</p>
         </div>
         
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="font-medium text-gray-700 mb-2">Arrival Time</h3>
-          <p className="text-2xl font-bold text-blue-700">{formatTime(arrivalTime)}</p>
+          <p className="text-xl font-bold text-blue-700">{formatTime(arrivalTime)}</p>
         </div>
       </div>
       
@@ -78,18 +78,20 @@ const JourneySchedule: React.FC<JourneyScheduleProps> = ({
           <FaRegCalendarAlt className="mr-2 text-blue-600" />
           <span className="font-medium">Days of Operation:</span>
           <div className="ml-2 flex flex-wrap gap-1">
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-              <span 
-                key={day}
-                className={`inline-block px-2 py-1 text-xs rounded-full ${
-                  daysOfWeek.includes(day) 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-500'
-                }`}
-              >
-                {day}
+            {daysOfWeek.length === 7 ? (
+              <span className="inline-block px-2 py-1 text-xs rounded-full bg-blue-600 text-white">
+                Daily
               </span>
-            ))}
+            ) : (
+              daysOfWeek.map(day => (
+                <span 
+                  key={day}
+                  className="inline-block px-2 py-1 text-xs rounded-full bg-blue-600 text-white"
+                >
+                  {day}
+                </span>
+              ))
+            )}
           </div>
         </div>
         

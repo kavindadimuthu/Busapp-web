@@ -43,9 +43,15 @@ const Home = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-gradient-to-r from-blue-800 to-blue-600 flex items-center justify-center">
-        <div className="absolute inset-0 bg-cover bg-center opacity-20" 
-             style={{backgroundImage: "url('/images/hero-bus.jpg')"}}></div>
+      <section className="relative h-[600px] flex items-center justify-center"
+       style={{
+         backgroundImage: "url('/medium-vecteezy_futuristic-electric-bus.jpg')",
+         backgroundSize: 'cover',
+         backgroundPosition: 'center'
+       }}>
+        {/* Dark Overlay */}
+        {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-800/30 to-blue-600/30"></div> */}
+        <div className="absolute inset-0 bg-black opacity-40"></div>
         
         <div className="container mx-auto px-4 py-24 relative z-10">
           <div className="text-center text-white mb-12">
